@@ -2,16 +2,10 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-    let supabaseResponse = NextResponse.next({ request });
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-    // ── Environment Variable Check ──────────────────────────────────────────
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-        console.error("Middleware failure: Missing Supabase environment variables.");
-        return supabaseResponse;
-    }
+    let supabaseResponse = NextResponse.next();
 
     try {
         const supabase = createServerClient(
@@ -23,13 +17,9 @@ export async function middleware(request: NextRequest) {
                         return request.cookies.getAll();
                     },
                     setAll(cookiesToSet: any[]) {
-                        cookiesToSet.forEach(({ name, value }) =>
-                            request.cookies.set(name, value)
-                        );
-                        supabaseResponse = NextResponse.next({ request });
-                        cookiesToSet.forEach(({ name, value, options }) =>
-                            supabaseResponse.cookies.set(name, value, options)
-                        );
+                        cookiesToSet.forEach(({ name, value, options }) => {
+                            supabaseResponse.cookies.set(name, value, options);
+                        });
                     },
                 },
             }
@@ -41,24 +31,14 @@ export async function middleware(request: NextRequest) {
 
         const pathname = request.nextUrl.pathname;
 
-        // ── Protected admin routes ──────────────────────────────────────────────
+        // Admin routes
         if (pathname.startsWith("/admin")) {
             if (!user) {
                 return NextResponse.redirect(new URL("/login", request.url));
             }
-            // Check role from profiles table
-            const { data: profile } = await (supabase
-                .from("profiles")
-                .select("role")
-                .eq("id", user.id)
-                .single() as any);
-
-            if (!profile || profile.role !== "admin") {
-                return NextResponse.redirect(new URL("/", request.url));
-            }
         }
 
-        // ── Protected user routes ───────────────────────────────────────────────
+        // User routes
         const userOnlyPaths = ["/dashboard", "/profile", "/following", "/discover"];
         if (userOnlyPaths.some((p) => pathname.startsWith(p))) {
             if (!user) {
@@ -66,21 +46,15 @@ export async function middleware(request: NextRequest) {
             }
         }
 
-        // ── Auth pages — redirect if already logged in ──────────────────────────
+        // Auth pages
         if (pathname === "/login" || pathname === "/register") {
             if (user) {
                 return NextResponse.redirect(new URL("/dashboard", request.url));
             }
         }
     } catch (error) {
-        console.error("Middleware unexpected error:", error);
+        console.error("Middleware error:", error);
     }
 
     return supabaseResponse;
 }
-
-export const config = {
-    matcher: [
-        "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-    ],
-};
