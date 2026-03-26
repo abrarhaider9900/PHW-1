@@ -66,7 +66,7 @@ export default async function HomePage() {
         ...((trainersRes.data as any[]) || []).map(t => ({ ...t, _source: 'trainers' })),
         ...((profilesRes.data as any[]) || []).map(p => ({ ...p, _source: 'profiles' }))
     ].slice(0, 3);
-    
+
     const trainers = spotlightTrainers;
 
     // Active sponsors
@@ -170,7 +170,7 @@ export default async function HomePage() {
                         </div>
 
                         {/* Trainer Spotlight Section */}
-                        <div style={{ 
+                        <div style={{
                             marginTop: "60px",
                             background: "#fff",
                             borderRadius: "16px",
@@ -179,9 +179,9 @@ export default async function HomePage() {
                             boxShadow: "0 4px 20px rgba(0,0,0,0.03)"
                         }}>
                             <div style={{ marginBottom: "25px" }}>
-                                <h4 style={{ 
-                                    fontSize: "20px", 
-                                    fontWeight: "800", 
+                                <h4 style={{
+                                    fontSize: "20px",
+                                    fontWeight: "800",
                                     color: "#0a2540",
                                     margin: 0
                                 }}>Trainer Spotlight</h4>
@@ -199,12 +199,12 @@ export default async function HomePage() {
                                             display: "flex",
                                             flexDirection: "column",
                                             textDecoration: "none",
-                                        }} 
-                                        className="trainer-card-hover"
+                                        }}
+                                            className="trainer-card-hover"
                                         >
-                                            <div style={{ 
-                                                width: "100%", 
-                                                height: "240px", 
+                                            <div style={{
+                                                width: "100%",
+                                                height: "240px",
                                                 position: "relative",
                                                 borderRadius: "14px",
                                                 overflow: "hidden",
@@ -212,34 +212,34 @@ export default async function HomePage() {
                                                 border: "1px solid #f0f0f0"
                                             }}>
                                                 <Image
-                                                    src={imageUrl || "https://images.unsplash.com/photo-1598974357801-cbca100e65d3?auto=format&fit=crop&q=80&w=800"}
+                                                    src="/images/logo.png"
                                                     alt={name}
                                                     fill
                                                     style={{ objectFit: "cover" }}
                                                 />
                                             </div>
                                             <div style={{ padding: "5px 2px" }}>
-                                                <h3 style={{ 
-                                                    fontSize: "17px", 
-                                                    fontWeight: "700", 
-                                                    margin: "0 0 5px", 
-                                                    color: "#0a2540" 
+                                                <h3 style={{
+                                                    fontSize: "17px",
+                                                    fontWeight: "700",
+                                                    margin: "0 0 5px",
+                                                    color: "#0a2540"
                                                 }}>
                                                     {name}
                                                 </h3>
-                                                <div style={{ 
-                                                    fontSize: "14px", 
-                                                    color: "#5469d4", 
+                                                <div style={{
+                                                    fontSize: "14px",
+                                                    color: "#5469d4",
                                                     fontWeight: "500",
-                                                    marginBottom: "8px", 
-                                                    lineHeight: "1.4" 
+                                                    marginBottom: "8px",
+                                                    lineHeight: "1.4"
                                                 }}>
                                                     {specialties?.[0] || "Performance Trainer"}
                                                     {specialties?.[1] && ` & ${specialties[1]}`}
                                                 </div>
-                                                <div style={{ 
-                                                    fontSize: "13px", 
-                                                    fontWeight: "500", 
+                                                <div style={{
+                                                    fontSize: "13px",
+                                                    fontWeight: "500",
                                                     color: "#697386",
                                                     display: "flex",
                                                     alignItems: "center",
