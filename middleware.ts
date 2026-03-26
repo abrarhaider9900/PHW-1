@@ -2,10 +2,17 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    let supabaseResponse = NextResponse.next({ request });
 
-    let supabaseResponse = NextResponse.next();
+    // ── Environment Variable Check ──────────────────────────────────────────
+    // We check these explicitly to avoid crashing the middleware if they are missing on Vercel.
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+        console.error("Middleware failure: Missing Supabase environment variables.");
+        return supabaseResponse;
+    }
 
     try {
         const supabase = createServerClient(
@@ -17,9 +24,13 @@ export async function middleware(request: NextRequest) {
                         return request.cookies.getAll();
                     },
                     setAll(cookiesToSet: any[]) {
-                        cookiesToSet.forEach(({ name, value, options }) => {
-                            supabaseResponse.cookies.set(name, value, options);
-                        });
+                        cookiesToSet.forEach(({ name, value }) =>
+                            request.cookies.set(name, value)
+                        );
+                        supabaseResponse = NextResponse.next({ request });
+                        cookiesToSet.forEach(({ name, value, options }) =>
+                            supabaseResponse.cookies.set(name, value, options)
+                        );
                     },
                 },
             }
@@ -58,3 +69,9 @@ export async function middleware(request: NextRequest) {
 
     return supabaseResponse;
 }
+
+export const config = {
+    matcher: [
+        "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    ],
+};
