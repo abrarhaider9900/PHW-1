@@ -75,7 +75,7 @@ export default function AdminRolesModule() {
 
             // 2. Sync Permissions
             await (supabase.from("role_permissions") as any).delete().eq("role_id", roleId);
-            
+
             if (selectedPermissions.length > 0) {
                 const relations = selectedPermissions.map(pId => ({
                     role_id: roleId,
@@ -114,7 +114,7 @@ export default function AdminRolesModule() {
     };
 
     const togglePermission = (id: number) => {
-        setSelectedPermissions(prev => 
+        setSelectedPermissions(prev =>
             prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]
         );
     };
@@ -199,16 +199,14 @@ export default function AdminRolesModule() {
                                                 key={permission.id}
                                                 type="button"
                                                 onClick={() => togglePermission(permission.id)}
-                                                className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
-                                                    isSelected 
-                                                    ? 'bg-white border-orange-200 shadow-sm' 
+                                                className={`flex items-center justify-between p-3 rounded-xl border transition-all ${isSelected
+                                                    ? 'bg-white border-orange-200 shadow-sm'
                                                     : 'bg-transparent border-transparent hover:bg-gray-50'
-                                                }`}
+                                                    }`}
                                             >
                                                 <div className="flex items-center gap-3">
-                                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                                                        isSelected ? 'bg-[var(--color-primary)] text-white shadow-md shadow-orange-900/10' : 'bg-white border border-gray-100 text-gray-300'
-                                                    }`}>
+                                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${isSelected ? 'bg-[var(--color-primary)] text-white shadow-md shadow-orange-900/10' : 'bg-white border border-gray-100 text-gray-300'
+                                                        }`}>
                                                         {isSelected ? <Check size={14} strokeWidth={3} /> : <div className="w-1.5 h-1.5 rounded-full bg-gray-200" />}
                                                     </div>
                                                     <span className={`text-[11px] font-bold uppercase tracking-wider ${isSelected ? 'text-[var(--color-primary)]' : 'text-gray-500'}`}>
