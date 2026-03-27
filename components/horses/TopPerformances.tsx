@@ -83,12 +83,8 @@ export default function TopPerformances({
                 </h4>
             </div>
 
-            {/* Performance cards grid — 2 columns */}
-            <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(2, 1fr)",
-                gap: "20px"
-            }}>
+            {/* Performance cards grid — Responsive columns */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {displayEntries.length > 0 ? (
                     displayEntries.map(({ discipline, perf }, idx) => {
                         const { label, placeholder } = getDisciplineInfo(discipline.name);
@@ -105,20 +101,18 @@ export default function TopPerformances({
                                     borderRadius: "16px",
                                     overflow: "hidden",
                                     transition: "all 0.3s ease",
-                                    height: "115px",
                                     padding: "10px",
-                                    maxWidth: "450px"
                                 }}
                             >
                                 {/* Image Container */}
                                 <div style={{
-                                    width: "110px",
-                                    height: "100%",
+                                    width: "80px",
+                                    height: "80px",
                                     position: "relative",
                                     flexShrink: 0,
                                     borderRadius: "12px",
                                     overflow: "hidden"
-                                }}>
+                                }} className="sm:w-[110px] sm:h-[110px]">
                                     <Image
                                         src={perf.horse_image_url || "/images/header-banner.png"}
                                         alt={perf.horse_name}
@@ -136,32 +130,31 @@ export default function TopPerformances({
                                     flex: 1
                                 }}>
                                     <div style={{
-                                        fontSize: "12px",
+                                        fontSize: "11px",
                                         fontWeight: "700",
                                         color: "#888",
                                         textTransform: "uppercase",
                                         letterSpacing: "0.02em",
                                         marginBottom: "2px"
-                                    }}>
+                                    }} className="sm:text-[12px]">
                                         {label}
                                     </div>
                                     <h3 style={{
-                                        fontSize: "15px",
                                         fontWeight: "800",
                                         margin: "0 0 4px",
                                         color: "#071437",
                                         lineHeight: "1.2"
-                                    }}>
+                                    }} className="text-[14px] sm:text-[15px]">
                                         {perf.horse_name} • ${Number(perf.prize_money).toLocaleString()}
                                     </h3>
                                     <div style={{
-                                        fontSize: "13px",
+                                        fontSize: "12px",
                                         fontWeight: "700",
                                         color: "#00a884",
                                         display: "flex",
                                         alignItems: "center",
                                         gap: "2px"
-                                    }}>
+                                    }} className="sm:text-[13px]">
                                         Trainer: {perf.trainer_name} <ChevronRight size={14} />
                                     </div>
                                 </div>

@@ -19,20 +19,19 @@ export default function HeaderBanner() {
 
     return (
         <div
+            className="container"
             style={{
-                maxWidth: "1200px",   // controls container width
                 margin: "10px auto",  // center + top spacing
-                padding: "0 20px",    // side spacing
             }}
         >
             <div
                 style={{
                     position: "relative",
                     width: "100%",
-                    height: "420px",
                     overflow: "hidden",
                     borderRadius: "20px",   // rounded corners
                 }}
+                className="h-[200px] sm:h-[280px] md:h-[350px]"
             >
                 <Image
                     src="/images/header-banner.png"
@@ -59,13 +58,13 @@ export default function HeaderBanner() {
                     <h1
                         style={{
                             color: "#ffffff",
-                            fontSize: "48px",
                             fontWeight: "900",
                             letterSpacing: "2px",
                             textTransform: "uppercase",
-                            marginBottom: "24px",
+                            marginBottom: "16px",
                             textShadow: "2px 4px 15px rgba(0,0,0,0.6)",
                         }}
+                        className="text-[24px] sm:text-[36px] md:text-[48px]"
                     >
                         SPONSOR AD
                     </h1>
@@ -73,7 +72,7 @@ export default function HeaderBanner() {
                     <NextLink
                         href="/login"
                         className="relative overflow-hidden 
-                        font-[700] text-[14px] uppercase px-8 py-3
+                        font-[700] text-[12px] md:text-[14px] uppercase px-6 md:px-8 py-2 md:py-3
                         text-white
                         group"
                     >

@@ -117,26 +117,27 @@ export default function Navbar() {
 
     return (
         <header className="w-full bg-[#f1f1f1] sticky top-0 z-50">
-            <div className="max-w-[1240px] mx-auto px-10">
-                <nav className="flex items-center justify-between h-[130px]">
+            <div className="max-w-[1240px] mx-auto px-6 md:px-10">
+                <nav className="flex items-center justify-between h-[80px] md:h-[130px]">
 
                     {/* Logo */}
                     <NextLink href="/" className="flex items-center">
                         <Image
                             src="/images/logo.png"
                             alt="logo"
-                            width={120}
-                            height={60}
+                            width={100}
+                            height={50}
+                            className="w-[80px] md:w-[120px] h-auto"
                             priority
                         />
                     </NextLink>
 
-                    {/* Center Navigation */}
-                    <ul className="hidden md:flex items-center gap-[35px] uppercase text-[14px] font-[700] tracking-[0.5px]">
+                    {/* Center Navigation - Hidden on Mobile */}
+                    <ul className="hidden md:flex items-center gap-[25px] lg:gap-[35px] uppercase text-[13px] lg:text-[14px] font-[700] tracking-[0.5px]">
                         {navLinks.map((link) => (
                             <li
                                 key={link.label}
-                                className="relative h-[100px] flex items-center group"
+                                className="relative h-[130px] flex items-center group"
                             >
                                 <NextLink
                                     href={link.href}
@@ -165,7 +166,7 @@ export default function Navbar() {
                                                     transition-all duration-300 ease-out">
 
                                         <div className="bg-white shadow-[0_15px_40px_rgba(0,0,0,0.12)] 
-                                                    w-[320px] py-8 relative">
+                                                    w-[280px] lg:w-[320px] py-6 lg:py-8 relative">
 
                                             {link.dropdown.map((sub) => (
                                                 <NextLink
@@ -177,7 +178,7 @@ export default function Navbar() {
                                                             sub.onClick();
                                                         }
                                                     }}
-                                                    className="block px-10 py-3 text-[15px] font-[600] text-[#444] hover:text-[var(--color-primary)]"
+                                                    className="block px-8 lg:px-10 py-2.5 lg:py-3 text-[14px] lg:text-[15px] font-[600] text-[#444] hover:text-[var(--color-primary)]"
                                                 >
                                                     {sub.label}
                                                 </NextLink>
@@ -190,14 +191,14 @@ export default function Navbar() {
                     </ul>
 
                     {/* Right Section */}
-                    <div className="flex items-center gap-[25px]">
+                    <div className="flex items-center gap-[15px] md:gap-[25px]">
                         {!email ? (
                             <NextLink
                                 href="/login"
                                 className="relative overflow-hidden 
-                                            font-[700] text-[14px] uppercase px-8 py-3
+                                            font-[700] text-[12px] md:text-[14px] uppercase px-4 md:px-8 py-2 md:py-3
                                             text-white
-                                            group"
+                                            group hidden sm:block"
                             >
                                 <span className="relative z-10 text-white">Login/Signup</span>
 
@@ -216,18 +217,15 @@ export default function Navbar() {
                         ) : (
                             <div className="relative" ref={avatarRef}>
                                 <div
-                                    className="flex items-center gap-4 cursor-pointer"
+                                    className="flex items-center gap-2 md:gap-4 cursor-pointer"
                                     onClick={() => setAvatarDropdownOpen(!avatarDropdownOpen)}
                                 >
                                     <div className="text-right hidden sm:block">
-                                        <div className="text-[16px] font-[700] text-[#333] leading-tight lowercase">
+                                        <div className="text-[14px] md:text-[16px] font-[700] text-[#333] leading-tight lowercase">
                                             {profile?.full_name || email.split('@')[0]}
                                         </div>
-                                        <div className="text-[13px] font-[400] text-[#999] leading-tight">
-                                            {email}
-                                        </div>
                                     </div>
-                                    <div className="w-[45px] h-[45px] bg-[#d1d5db] rounded-full flex items-center justify-center text-white overflow-hidden relative">
+                                    <div className="w-[35px] h-[35px] md:w-[45px] md:h-[45px] bg-[#d1d5db] rounded-full flex items-center justify-center text-white overflow-hidden relative">
                                         {profile?.avatar_url ? (
                                             <Image
                                                 src={profile.avatar_url}
@@ -236,7 +234,7 @@ export default function Navbar() {
                                                 className="object-cover"
                                             />
                                         ) : (
-                                            <User size={30} fill="currentColor" strokeWidth={0} />
+                                            <User size={24} fill="currentColor" strokeWidth={0} />
                                         )}
                                     </div>
                                 </div>
@@ -284,31 +282,91 @@ export default function Navbar() {
                             onClick={() => setSearchOpen(!searchOpen)}
                         >
                             {searchOpen ? (
-                                <X size={30} strokeWidth={2.5} />
+                                <X size={28} strokeWidth={2.5} />
                             ) : (
-                                <Search size={30} strokeWidth={2.5} />
+                                <Search size={28} strokeWidth={2.5} />
                             )}
                         </button>
 
                         {/* Mobile Toggle */}
                         <button
-                            className="md:hidden text-3xl"
+                            className="md:hidden text-2xl text-[#141414]"
                             onClick={() => setMobileOpen(!mobileOpen)}
                         >
-                            {mobileOpen ? "✕" : "☰"}
+                            {mobileOpen ? <X size={28} /> : "☰"}
                         </button>
                     </div>
                 </nav>
             </div>
 
+            {/* Mobile Menu Drawer */}
+            {mobileOpen && (
+                <div className="md:hidden fixed inset-0 z-[100] bg-white">
+                    <div className="flex flex-col h-full">
+                        <div className="flex items-center justify-between p-6 border-b">
+                            <Image
+                                src="/images/logo.png"
+                                alt="logo"
+                                width={100}
+                                height={50}
+                            />
+                            <button onClick={() => setMobileOpen(false)} className="text-2xl">
+                                <X size={32} />
+                            </button>
+                        </div>
+                        <ul className="flex-1 overflow-y-auto py-6">
+                            {navLinks.map((link) => (
+                                <li key={link.label} className="border-b last:border-none">
+                                    <div className="px-6 py-4">
+                                        <NextLink
+                                            href={link.href}
+                                            onClick={() => setMobileOpen(false)}
+                                            className="text-[18px] font-[700] text-[#141414] block"
+                                        >
+                                            {link.label}
+                                        </NextLink>
+                                        {link.dropdown && (
+                                            <ul className="mt-2 ml-4">
+                                                {link.dropdown.map((sub) => (
+                                                    <li key={sub.label} className="py-2">
+                                                        <NextLink
+                                                            href={sub.href}
+                                                            onClick={() => setMobileOpen(false)}
+                                                            className="text-[15px] font-[600] text-[#666]"
+                                                        >
+                                                            {sub.label}
+                                                        </NextLink>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
+                                </li>
+                            ))}
+                            {!email && (
+                                <li className="px-6 py-6">
+                                    <NextLink
+                                        href="/login"
+                                        onClick={() => setMobileOpen(false)}
+                                        className="w-full bg-[var(--color-primary)] text-white text-center py-4 rounded-lg font-bold block"
+                                    >
+                                        LOGIN / SIGNUP
+                                    </NextLink>
+                                </li>
+                            )}
+                        </ul>
+                    </div>
+                </div>
+            )}
+
             {/* Floating Search Bar Popup */}
             {searchOpen && (
-                <div className="absolute top-[130px] right-10 z-[60] animate-in fade-in slide-in-from-top-4 duration-300 h-0">
-                    <div className="bg-white shadow-[0_10px_40px_rgba(0,0,0,0.15)] rounded-full px-10 py-5 flex items-center gap-4 w-[450px]">
+                <div className="absolute top-[80px] md:top-[130px] left-0 right-0 md:right-10 px-4 md:px-0 z-[60] animate-in fade-in slide-in-from-top-4 duration-300">
+                    <div className="bg-white shadow-[0_10px_40px_rgba(0,0,0,0.15)] rounded-full px-6 md:px-10 py-3 md:py-5 flex items-center gap-4 w-full md:w-[450px] mx-auto md:ml-auto md:mr-0">
                         <input
                             type="text"
                             placeholder="Search"
-                            className="flex-1 bg-transparent border-none outline-none text-[18px] font-[500] text-[#333]"
+                            className="flex-1 bg-transparent border-none outline-none text-[16px] md:text-[18px] font-[500] text-[#333]"
                             autoFocus
                         />
                         <button className="text-[#333] hover:text-[var(--color-primary)] transition-colors">

@@ -52,12 +52,12 @@ export default function Footer() {
     ];
 
     return (
-        <footer style={{ background: "var(--color-footer-bg)", color: "#ffffff", paddingTop: "60px", position: "relative" }}>
+        <footer style={{ background: "var(--color-footer-bg)", color: "#ffffff", paddingTop: "60px", paddingBottom: "0", position: "relative" }}>
             <div className="container">
-                <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1.4fr 1.4fr", gap: "40px", paddingBottom: "60px" }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8 lg:gap-10 pb-10 md:pb-16">
 
                     {/* About Column */}
-                    <div>
+                    <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
                         <Link href="/">
                             <Image
                                 src="/images/logo-white.png"
@@ -65,6 +65,7 @@ export default function Footer() {
                                 width={220}
                                 height={160}
                                 style={{ objectFit: "contain", marginBottom: "20px", display: "block" }}
+                                className="w-[180px] md:w-[220px]"
                             />
                         </Link>
                         <p style={{ color: "#ffffff", fontSize: "14px", lineHeight: "1.8", marginBottom: "30px", opacity: 0.9 }}>
@@ -90,7 +91,7 @@ export default function Footer() {
                     </div>
 
                     {/* Services Column */}
-                    <div>
+                    <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
                         <h4 style={{ fontSize: "20px", fontWeight: "700", marginBottom: "25px", color: "#ffffff" }}>
                             {footerSections[0].title}
                         </h4>
@@ -110,7 +111,7 @@ export default function Footer() {
                     </div>
 
                     {/* Contacts Column */}
-                    <div>
+                    <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
                         <h4 style={{ fontSize: "20px", fontWeight: "700", marginBottom: "25px", color: "#ffffff" }}>
                             {footerSections[1].title}
                         </h4>
@@ -125,7 +126,7 @@ export default function Footer() {
                     </div>
 
                     {/* Working Hours Column */}
-                    <div>
+                    <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
                         <h4 style={{ fontSize: "20px", fontWeight: "700", marginBottom: "25px", color: "#ffffff" }}>
                             {footerSections[2].title}
                         </h4>
@@ -144,16 +145,18 @@ export default function Footer() {
 
             {/* Bottom Bar */}
             <div style={{ background: "var(--color-footer-copyright)", padding: "20px 0" }}>
-                <div className="container" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "14px" }}>
-                    <div style={{ opacity: 0.85, color: "#ffffff" }}>© Performance Horse World</div>
-                    <div style={{ display: "flex", gap: "12px", alignItems: "center", color: "#ffffff" }}>
-                        <Link href="#" style={{ opacity: 0.85, color: "#ffffff", textDecoration: "none" }} className="hover:opacity-100">
-                            Privacy Policy
-                        </Link>
-                        <span style={{ opacity: 0.5 }}>-</span>
-                        <Link href="#" style={{ opacity: 0.85, color: "#ffffff", textDecoration: "none" }} className="hover:opacity-100">
-                            Terms & Conditions
-                        </Link>
+                <div className="container" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "14px", flexDirection: "column", gap: "10px" }}>
+                    <div className="md:flex md:justify-between md:w-full md:items-center text-center">
+                        <div style={{ opacity: 0.85, color: "#ffffff", marginBottom: "10px" }} className="md:mb-0">© Performance Horse World</div>
+                        <div style={{ display: "flex", gap: "12px", alignItems: "center", justifyContent: "center", color: "#ffffff" }}>
+                            <Link href="#" style={{ opacity: 0.85, color: "#ffffff", textDecoration: "none" }} className="hover:opacity-100">
+                                Privacy Policy
+                            </Link>
+                            <span style={{ opacity: 0.5 }}>-</span>
+                            <Link href="#" style={{ opacity: 0.85, color: "#ffffff", textDecoration: "none" }} className="hover:opacity-100">
+                                Terms & Conditions
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>

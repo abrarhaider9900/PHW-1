@@ -83,11 +83,11 @@ export default async function HomePage() {
             <HeaderBanner />
 
             {/* Main Content Area */}
-            <div className="container" style={{ padding: "0 15px 80px" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "40px" }}>
+            <div className="container" style={{ padding: "0 20px 80px" }}>
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-10">
 
                     {/* Left Column */}
-                    <div>
+                    <div className="space-y-10">
                         {/* Top Performances Widget */}
                         <div className="features-style-area">
                             {disciplines && disciplines.length > 0 ? (
@@ -109,7 +109,6 @@ export default async function HomePage() {
 
                         {/* Trending Horses Section */}
                         <div style={{
-                            marginTop: "40px",
                             background: "#ffffff",
                             borderRadius: "24px",
                             padding: "32px",
@@ -126,7 +125,7 @@ export default async function HomePage() {
                                     Trending Horses
                                 </h4>
                             </div>
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 240px))", gap: "20px" }}>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
                                 {trendingHorses && (trendingHorses as any[]).map((horse: any) => {
                                     let ageStr = "N/A";
                                     if (horse.date_of_birth) {
@@ -177,7 +176,6 @@ export default async function HomePage() {
 
                         {/* Trainer Spotlight Section */}
                         <div style={{
-                            marginTop: "40px",
                             background: "#ffffff",
                             borderRadius: "24px",
                             padding: "32px",
@@ -191,7 +189,8 @@ export default async function HomePage() {
                                     color: "#071437",
                                     letterSpacing: "-0.02em"
                                 }}>Trainer Spotlight</h4>
-                            </div>                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 280px))", gap: "25px" }}>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                                 {trainers && trainers.length > 0 ? (trainers as any[]).map((trainer: any) => {
                                     const name = trainer._source === 'profiles' ? trainer.full_name : trainer.name;
                                     const specialties = trainer.specialties || (trainer._source === 'profiles' ? ["Performance Trainer"] : []);
@@ -265,7 +264,7 @@ export default async function HomePage() {
                     </div>
 
                     {/* Right Column (Sidebar) */}
-                    <aside style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+                    <aside className="flex flex-col gap-8">
                         {/* Upcoming Events Area */}
                         <UpcomingEvents />
 
