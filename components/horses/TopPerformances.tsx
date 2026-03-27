@@ -26,6 +26,9 @@ export default function TopPerformances({
         }
     });
 
+    // Take only the first 5 entries if there are many, or just keep all if few
+    const displayEntries = allEntries.slice(0, 6);
+
     // Helper to format discipline name and get placeholder
     const getDisciplineInfo = (name: string) => {
         switch (name) {
@@ -55,103 +58,111 @@ export default function TopPerformances({
                     placeholder: "https://images.unsplash.com/photo-1601989398759-29ec98715f6a?q=80&w=800"
                 };
             default:
-                return { label: name, placeholder: "/images/placeholder.jpg" };
+                return { label: name, placeholder: "/images/header-banner.png" };
         }
     }
 
     return (
-        <div style={{ marginBottom: "50px" }}>
+        <div style={{
+            background: "#ffffff",
+            borderRadius: "24px",
+            padding: "32px",
+            border: "1px solid #f0f0f0",
+            marginBottom: "40px",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.03)"
+        }}>
             {/* Section Header */}
-            <div className="section-header" style={{ marginBottom: "30px", borderBottom: "1px solid #e4e4e4", paddingBottom: "12px" }}>
-                <h4 style={{ fontSize: "17px", fontWeight: "800", color: "#071437" }}>
+            <div style={{ marginBottom: "28px" }}>
+                <h4 style={{
+                    fontSize: "20px",
+                    fontWeight: "850",
+                    color: "#071437",
+                    letterSpacing: "-0.02em"
+                }}>
                     Top Performances — Month
                 </h4>
             </div>
 
             {/* Performance cards grid — 2 columns */}
-            <div style={{ 
-                display: "grid", 
-                gridTemplateColumns: "1fr 1fr", 
-                gap: "24px 20px" 
+            <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, 1fr)",
+                gap: "20px"
             }}>
-                {allEntries.length > 0 ? (
-                    allEntries.map(({ discipline, perf }, idx) => {
+                {displayEntries.length > 0 ? (
+                    displayEntries.map(({ discipline, perf }, idx) => {
                         const { label, placeholder } = getDisciplineInfo(discipline.name);
-                        
+
                         return (
                             <Link
                                 key={`${discipline.id}-${perf.id ?? idx}`}
                                 href={`/Stallions/${perf.horse_id}`}
+                                className="premium-card-hover"
                                 style={{
                                     display: "flex",
-                                    background: "#ffffff",
+                                    background: "#f8fafb",
                                     textDecoration: "none",
-                                    borderRadius: "10px",
+                                    borderRadius: "16px",
                                     overflow: "hidden",
-                                    border: "1px solid #e4e4e4",
-                                    transition: "0.3s transform",
-                                    height: "135px",
-                                    boxShadow: "0 2px 4px rgba(0,0,0,0.02)"
-                                }}
-                                onMouseOver={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-5px)';
-                                    e.currentTarget.style.boxShadow = '0 8px 15px rgba(0,0,0,0.08)';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.02)';
+                                    transition: "all 0.3s ease",
+                                    height: "115px",
+                                    padding: "10px",
+                                    maxWidth: "450px"
                                 }}
                             >
                                 {/* Image Container */}
-                                <div style={{ width: "155px", height: "100%", position: "relative", flexShrink: 0 }}>
+                                <div style={{
+                                    width: "110px",
+                                    height: "100%",
+                                    position: "relative",
+                                    flexShrink: 0,
+                                    borderRadius: "12px",
+                                    overflow: "hidden"
+                                }}>
                                     <Image
-                                        src={perf.horse?.image_url || placeholder}
-                                        alt={perf.horse?.name}
+                                        src={perf.horse_image_url || "/images/header-banner.png"}
+                                        alt={perf.horse_name}
                                         fill
                                         style={{ objectFit: "cover" }}
                                     />
                                 </div>
 
-                                {/* Content Container */}
+                                {/* Content */}
                                 <div style={{
-                                    padding: "16px 20px",
+                                    padding: "4px 12px",
                                     display: "flex",
                                     flexDirection: "column",
                                     justifyContent: "center",
-                                    flex: 1,
+                                    flex: 1
                                 }}>
-                                    {/* Discipline name */}
                                     <div style={{
-                                        fontSize: "14px",
-                                        color: "#666",
-                                        fontWeight: "500",
-                                        marginBottom: "8px",
+                                        fontSize: "12px",
+                                        fontWeight: "700",
+                                        color: "#888",
+                                        textTransform: "uppercase",
+                                        letterSpacing: "0.02em",
+                                        marginBottom: "2px"
                                     }}>
                                         {label}
                                     </div>
-
-                                    {/* Horse name + prize money */}
                                     <h3 style={{
-                                        fontSize: "16px",
-                                        fontWeight: "700",
-                                        margin: "0 0 10px",
-                                        color: "#071437",
-                                        lineHeight: "1.2",
-                                    }}>
-                                        {perf.horse?.name}{perf.prize_money ? ` • ${formatMoney(perf.prize_money)}` : ""}
-                                    </h3>
-
-                                    {/* Trainer Link-like text */}
-                                    <div style={{
-                                        fontSize: "14.5px",
-                                        color: "#e7a431",
+                                        fontSize: "15px",
                                         fontWeight: "800",
+                                        margin: "0 0 4px",
+                                        color: "#071437",
+                                        lineHeight: "1.2"
+                                    }}>
+                                        {perf.horse_name} • ${Number(perf.prize_money).toLocaleString()}
+                                    </h3>
+                                    <div style={{
+                                        fontSize: "13px",
+                                        fontWeight: "700",
+                                        color: "#00a884",
                                         display: "flex",
                                         alignItems: "center",
-                                        gap: "2px",
+                                        gap: "2px"
                                     }}>
-                                        Trainer: {perf.horse?.trainer?.name || "Unknown"}
-                                        <ChevronRight size={16} strokeWidth={3} />
+                                        Trainer: {perf.trainer_name} <ChevronRight size={14} />
                                     </div>
                                 </div>
                             </Link>
@@ -159,13 +170,13 @@ export default function TopPerformances({
                     })
                 ) : (
                     <div style={{
-                        gridColumn: "span 2",
-                        padding: "50px",
+                        gridColumn: "1 / -1",
+                        padding: "40px",
                         textAlign: "center",
                         color: "#999",
                         background: "#fff",
-                        border: "1px dashed #ccc",
-                        borderRadius: "10px",
+                        border: "1px dashed #e0e0e0",
+                        borderRadius: "16px",
                     }}>
                         No top performances recorded this month.
                     </div>
@@ -173,4 +184,5 @@ export default function TopPerformances({
             </div>
         </div>
     );
-}
+}
+

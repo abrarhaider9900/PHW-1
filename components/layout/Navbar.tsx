@@ -5,7 +5,7 @@ import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Search, ChevronDown, User } from "lucide-react";
+import { Search, ChevronDown, User, X } from "lucide-react";
 import type { Profile } from "@/types/database";
 
 export default function Navbar() {
@@ -279,8 +279,15 @@ export default function Navbar() {
                             </div>
                         )}
 
-                        <button className="text-[#141414]">
-                            <Search size={30} strokeWidth={2.5} />
+                        <button
+                            className={`flex items-center justify-center transition-all duration-300 ${searchOpen ? 'text-[#00a884]' : 'text-[#141414]'}`}
+                            onClick={() => setSearchOpen(!searchOpen)}
+                        >
+                            {searchOpen ? (
+                                <X size={30} strokeWidth={2.5} />
+                            ) : (
+                                <Search size={30} strokeWidth={2.5} />
+                            )}
                         </button>
 
                         {/* Mobile Toggle */}
@@ -293,6 +300,23 @@ export default function Navbar() {
                     </div>
                 </nav>
             </div>
+
+            {/* Floating Search Bar Popup */}
+            {searchOpen && (
+                <div className="absolute top-[130px] right-10 z-[60] animate-in fade-in slide-in-from-top-4 duration-300 h-0">
+                    <div className="bg-white shadow-[0_10px_40px_rgba(0,0,0,0.15)] rounded-full px-10 py-5 flex items-center gap-4 w-[450px]">
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            className="flex-1 bg-transparent border-none outline-none text-[18px] font-[500] text-[#333]"
+                            autoFocus
+                        />
+                        <button className="text-[#333] hover:text-[var(--color-primary)] transition-colors">
+                            <Search size={24} strokeWidth={2.5} />
+                        </button>
+                    </div>
+                </div>
+            )}
         </header>
     );
 }

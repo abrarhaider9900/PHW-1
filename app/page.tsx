@@ -108,22 +108,30 @@ export default async function HomePage() {
                         </div>
 
                         {/* Trending Horses Section */}
-                        <div style={{ marginTop: "60px" }}>
-                            <div className="section-header">
-                                <h4>Trending Horses</h4>
+                        <div style={{
+                            marginTop: "40px",
+                            background: "#ffffff",
+                            borderRadius: "24px",
+                            padding: "32px",
+                            border: "1px solid #f0f0f0",
+                            boxShadow: "0 4px 20px rgba(0,0,0,0.03)"
+                        }}>
+                            <div style={{ marginBottom: "28px" }}>
+                                <h4 style={{
+                                    fontSize: "20px",
+                                    fontWeight: "850",
+                                    color: "#071437",
+                                    letterSpacing: "-0.02em"
+                                }}>
+                                    Trending Horses
+                                </h4>
                             </div>
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "25px" }}>
-                                {trendingHorses?.map((horse) => {
-                                    // Calculate age precisely if birth_date is available
-                                    let ageStr = "Unknown age";
-                                    if (horse.birth_date) {
-                                        const birth = new Date(horse.birth_date);
-                                        const today = new Date();
-                                        let age = today.getFullYear() - birth.getFullYear();
-                                        const m = today.getMonth() - birth.getMonth();
-                                        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-                                            age--;
-                                        }
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 240px))", gap: "20px" }}>
+                                {trendingHorses && (trendingHorses as any[]).map((horse: any) => {
+                                    let ageStr = "N/A";
+                                    if (horse.date_of_birth) {
+                                        const birthDate = new Date(horse.date_of_birth);
+                                        const age = new Date().getFullYear() - birthDate.getFullYear();
                                         ageStr = age >= 0 ? `${age} years` : "0 years";
                                     } else if (horse.birth_year) {
                                         const age = new Date().getFullYear() - horse.birth_year;
@@ -133,17 +141,19 @@ export default async function HomePage() {
                                     const ownerOrTrainerName = (horse.owner as any)?.full_name || horse.trainer?.name || "Unknown";
 
                                     return (
-                                        <Link key={horse.id} href={`/Stallions/${horse.id}`} className="features-style-item" style={{
-                                            textDecoration: "none",
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            marginBottom: 0,
-                                            background: "#fff",
-                                            borderRadius: "12px",
-                                            border: "1px solid #e4e4e4",
-                                            overflow: "hidden"
-                                        }}>
-                                            <div className="features-image" style={{ width: "100%", height: "160px", position: "relative" }}>
+                                        <Link key={horse.id} href={`/Stallions/${horse.id}`}
+                                            className="premium-card-hover"
+                                            style={{
+                                                textDecoration: "none",
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                background: "#ffffff",
+                                                borderRadius: "16px",
+                                                overflow: "hidden",
+                                                border: "1px solid #f0f0f0",
+                                                boxShadow: "0 2px 8px rgba(0,0,0,0.02)"
+                                            }}>
+                                            <div style={{ width: "100%", height: "150px", position: "relative" }}>
                                                 <Image
                                                     src={horse.image_url || "/images/placeholder.jpg"}
                                                     alt={horse.name}
@@ -151,11 +161,11 @@ export default async function HomePage() {
                                                     style={{ objectFit: "cover" }}
                                                 />
                                             </div>
-                                            <div className="features-content" style={{ padding: "18px", display: "flex", flexDirection: "column" }}>
-                                                <h3 style={{ fontSize: "15px", fontWeight: "700", margin: "0 0 6px", color: "var(--color-text-header)" }}>
+                                            <div style={{ padding: "12px", display: "flex", flexDirection: "column" }}>
+                                                <h3 style={{ fontSize: "15px", fontWeight: "800", margin: "0 0 4px", color: "#071437" }}>
                                                     {horse.name}
                                                 </h3>
-                                                <div style={{ fontSize: "13px", color: "#666" }}>
+                                                <div style={{ fontSize: "12px", color: "#666", fontWeight: "600" }}>
                                                     {ownerOrTrainerName} • {ageStr}
                                                 </div>
                                             </div>
@@ -167,79 +177,77 @@ export default async function HomePage() {
 
                         {/* Trainer Spotlight Section */}
                         <div style={{
-                            marginTop: "60px",
-                            background: "#fff",
-                            borderRadius: "16px",
-                            padding: "30px",
-                            border: "1px solid #eef0f2",
+                            marginTop: "40px",
+                            background: "#ffffff",
+                            borderRadius: "24px",
+                            padding: "32px",
+                            border: "1px solid #f0f0f0",
                             boxShadow: "0 4px 20px rgba(0,0,0,0.03)"
                         }}>
-                            <div style={{ marginBottom: "25px" }}>
+                            <div style={{ marginBottom: "28px" }}>
                                 <h4 style={{
                                     fontSize: "20px",
-                                    fontWeight: "800",
-                                    color: "#0a2540",
-                                    margin: 0
+                                    fontWeight: "850",
+                                    color: "#071437",
+                                    letterSpacing: "-0.02em"
                                 }}>Trainer Spotlight</h4>
-                            </div>
-
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "25px" }}>
+                            </div>                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 280px))", gap: "25px" }}>
                                 {trainers && trainers.length > 0 ? (trainers as any[]).map((trainer: any) => {
                                     const name = trainer._source === 'profiles' ? trainer.full_name : trainer.name;
-                                    const imageUrl = trainer._source === 'profiles' ? trainer.avatar_url : trainer.image_url;
                                     const specialties = trainer.specialties || (trainer._source === 'profiles' ? ["Performance Trainer"] : []);
                                     const horseCount = trainer.horses?.[0]?.count || 0;
+                                    const location = trainer.origin || trainer.location || "N/A";
 
                                     return (
-                                        <Link key={trainer.id} href={trainer._source === 'profiles' ? `/profile/${trainer.id}` : `/trainers/${trainer.id}`} style={{
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            textDecoration: "none",
-                                        }}
+                                        <Link key={trainer.id} href={trainer._source === 'profiles' ? `/profile/${trainer.id}` : `/trainers/${trainer.id}`}
                                             className="trainer-card-hover"
-                                        >
+                                            style={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                textDecoration: "none",
+                                                background: "#ffffff",
+                                                borderRadius: "18px",
+                                                overflow: "hidden",
+                                                border: "1px solid #f0f0f0",
+                                                boxShadow: "0 2px 8px rgba(0,0,0,0.02)"
+                                            }}>
                                             <div style={{
                                                 width: "100%",
-                                                height: "240px",
+                                                height: "220px",
                                                 position: "relative",
-                                                borderRadius: "14px",
                                                 overflow: "hidden",
-                                                marginBottom: "15px",
-                                                border: "1px solid #f0f0f0"
+                                                background: "#f8fafb"
                                             }}>
-                                                <Image
-                                                    src="/images/logo.png"
-                                                    alt={name}
-                                                    fill
-                                                    style={{ objectFit: "cover" }}
-                                                />
+                                                <div className="trainer-img-zoom" style={{ width: "100%", height: "100%", position: "relative", transition: "transform 0.5s ease" }}>
+                                                    <Image
+                                                        src={trainer.profile_image_url || "/images/logo.png"}
+                                                        alt={name}
+                                                        fill
+                                                        style={{ objectFit: "cover" }}
+                                                    />
+                                                </div>
                                             </div>
-                                            <div style={{ padding: "5px 2px" }}>
+                                            <div style={{ padding: "16px" }}>
                                                 <h3 style={{
-                                                    fontSize: "17px",
-                                                    fontWeight: "700",
-                                                    margin: "0 0 5px",
-                                                    color: "#0a2540"
+                                                    fontSize: "16px",
+                                                    fontWeight: "800",
+                                                    margin: "0 0 4px",
+                                                    color: "#071437"
                                                 }}>
                                                     {name}
                                                 </h3>
                                                 <div style={{
-                                                    fontSize: "14px",
-                                                    color: "#5469d4",
-                                                    fontWeight: "500",
-                                                    marginBottom: "8px",
-                                                    lineHeight: "1.4"
+                                                    fontSize: "13px",
+                                                    color: "#666",
+                                                    fontWeight: "600",
+                                                    marginBottom: "4px",
                                                 }}>
                                                     {specialties?.[0] || "Performance Trainer"}
-                                                    {specialties?.[1] && ` & ${specialties[1]}`}
                                                 </div>
                                                 <div style={{
-                                                    fontSize: "13px",
-                                                    fontWeight: "500",
-                                                    color: "#697386",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    gap: "4px"
+                                                    fontSize: "12px",
+                                                    fontWeight: "700",
+                                                    color: "#00a884",
                                                 }}>
                                                     Trained horses: {horseCount}
                                                 </div>
@@ -247,7 +255,7 @@ export default async function HomePage() {
                                         </Link>
                                     );
                                 }) : (
-                                    <div style={{ gridColumn: "span 3", padding: "40px", textAlign: "center", color: "#697386", border: "1px dashed #e6ebf1", borderRadius: "12px" }}>
+                                    <div style={{ gridColumn: "1 / -1", padding: "40px", textAlign: "center", color: "#999", border: "1px dashed #e0e0e0", borderRadius: "16px" }}>
                                         No trainers currently spotlighted
                                     </div>
                                 )}
@@ -257,17 +265,57 @@ export default async function HomePage() {
                     </div>
 
                     {/* Right Column (Sidebar) */}
-                    <aside style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
+                    <aside style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
                         {/* Upcoming Events Area */}
                         <UpcomingEvents />
 
-                        {/* Second Sponsor Ad (Placeholder) */}
-                        <div style={{ background: "transparent", padding: "0", border: "none" }}>
-                            <div className="section-header">
-                                <h4>Sponsor Ad</h4>
+                        {/* Sponsor Ad Area */}
+                        <div style={{
+                            background: "#ffffff",
+                            borderRadius: "24px",
+                            padding: "32px",
+                            border: "1px solid #f0f0f0",
+                            boxShadow: "0 4px 20px rgba(0,0,0,0.03)"
+                        }}>
+                            <div style={{ marginBottom: "20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                <h4 style={{
+                                    fontSize: "18px",
+                                    fontWeight: "850",
+                                    color: "#071437",
+                                    margin: 0
+                                }}>
+                                    Sponsor
+                                </h4>
+                                <span style={{ background: "#071437", color: "#fff", fontSize: "10px", padding: "2px 6px", borderRadius: "4px", fontWeight: "bold" }}>AD</span>
                             </div>
-                            <div style={{ background: "#ffffff", height: "250px", border: "1px solid #e4e4e4", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "10px" }}>
-                                <span style={{ color: "#999", fontSize: "12px" }}>AD UNIT (300 x 250)</span>
+                            <div style={{
+                                background: "#f8fafb",
+                                height: "250px",
+                                border: "1px solid #eef0f2",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                borderRadius: "16px",
+                                position: "relative",
+                                overflow: "hidden"
+                            }}>
+                                <Image
+                                    src="https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?q=80&w=871&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                    alt="Sponsor Ad"
+                                    fill
+                                    style={{ objectFit: "cover", opacity: 0.8 }}
+                                />
+                                <div style={{
+                                    position: "relative",
+                                    zIndex: 1,
+                                    textAlign: "center",
+                                    color: "#fff",
+                                    textShadow: "0 2px 4px rgba(0,0,0,0.5)"
+                                }}>
+                                    <div style={{ fontWeight: "800", fontSize: "14px", marginBottom: "4px" }}>Sponsor Ad Dimension</div>
+                                    <div style={{ fontSize: "12px", fontWeight: "600" }}>300 x 250</div>
+                                </div>
                             </div>
                         </div>
                     </aside>

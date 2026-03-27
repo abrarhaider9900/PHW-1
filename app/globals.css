@@ -180,9 +180,23 @@ a:hover {
 }
 
 .trainer-card-hover {
-  transition: transform 0.3s ease !important;
+  transition: all 0.3s ease !important;
 }
 
 .trainer-card-hover:hover {
   transform: translateY(-5px) !important;
+}
+
+.trainer-card-hover:hover .trainer-img-zoom {
+  transform: scale(1.05);
+}
+
+.premium-card-hover {
+  transition: all 0.3s ease !important;
+}
+
+.premium-card-hover:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+  background-color: #f0f4f7 !important;
 }

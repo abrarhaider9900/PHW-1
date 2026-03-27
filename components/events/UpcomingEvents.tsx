@@ -13,20 +13,40 @@ export default async function UpcomingEvents() {
         .limit(5) as any);
 
     return (
-        <div style={{ marginBottom: "30px" }}>
-            <div className="section-header">
-                <h4>Upcoming Events</h4>
+        <div style={{ 
+            background: "#ffffff", 
+            borderRadius: "24px", 
+            padding: "32px",
+            border: "1px solid #f0f0f0",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.03)"
+        }}>
+            <div style={{ marginBottom: "20px" }}>
+                <h4 style={{ 
+                    fontSize: "18px", 
+                    fontWeight: "850", 
+                    color: "#071437",
+                    margin: 0
+                }}>
+                    Upcoming Events
+                </h4>
             </div>
 
             {events && events.length > 0 ? (
-                <div style={{ display: "flex", flexDirection: "column" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     {events.map((event: any) => (
                         <EventCard key={event.id} event={event} compact />
                     ))}
                 </div>
             ) : (
-                <div style={{ padding: "30px", textAlign: "center", color: "#999", border: "1px dashed #ccc", borderRadius: "10px" }}>
-                    No upcoming events
+                <div style={{ 
+                    padding: "30px", 
+                    textAlign: "center", 
+                    color: "#999", 
+                    background: "#f8fafb",
+                    border: "1px dashed #e0e0e0", 
+                    borderRadius: "16px" 
+                }}>
+                    No upcoming events available.
                 </div>
             )}
         </div>
