@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import UserRow from "@/components/admin/UserRow";
+import UserManagementTabs from "@/components/admin/UserManagementTabs";
 
 export default async function AdminUsersPage() {
     const supabase = await createClient();
@@ -14,6 +15,8 @@ export default async function AdminUsersPage() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
                 <h1 style={{ fontSize: "20px", fontWeight: 700, color: "#fff" }}>Manage Users</h1>
             </div>
+
+            <UserManagementTabs />
 
             <div className="card">
                 <table className="phw-table">

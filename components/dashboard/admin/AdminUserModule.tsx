@@ -12,9 +12,13 @@ import {
     Filter,
     Tags,
     X,
-    Check
+    Check,
+    Lock,
+    Plus
 } from "lucide-react";
 import type { FunctionalRole, UserRole } from "@/types/database";
+import AdminPermissionsModule from "./AdminPermissionsModule";
+import AdminRolesModule from "./AdminRolesModule";
 
 export default function AdminUserModule() {
     const supabase = createClient();
@@ -24,6 +28,7 @@ export default function AdminUserModule() {
     const [statusFilter, setStatusFilter] = useState("all");
     const [selectedUser, setSelectedUser] = useState<any>(null);
     const [isAssigningRoles, setIsAssigningRoles] = useState(false);
+    const [subTab, setSubTab] = useState<"users" | "roles" | "permissions">("users");
 
     const fetchUsers = useCallback(async () => {
         setLoading(true);
@@ -68,29 +73,68 @@ export default function AdminUserModule() {
                     <h2 className="text-2xl font-black text-gray-900 uppercase">User Management</h2>
                     <p className="text-gray-500 text-sm font-medium">Manage permissions, roles, and account statuses</p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <div className="px-4 py-2 bg-white border border-gray-100 rounded-xl shadow-sm flex items-center gap-3 w-64">
-                        <Search size={16} className="text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Find user..."
-                            className="bg-transparent border-none outline-none text-xs font-bold uppercase w-full"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                    </div>
-                    <select
-                        className="px-4 py-2 bg-white border border-gray-100 rounded-xl shadow-sm text-xs font-bold uppercase outline-none cursor-pointer"
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
+                <div className="flex items-center gap-2 bg-gray-100 p-1.5 rounded-2xl border border-gray-200 shadow-inner">
+                    <button
+                        onClick={() => setSubTab("users")}
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${subTab === "users"
+                            ? "bg-white text-gray-900 shadow-sm border border-gray-100"
+                            : "text-gray-400 hover:text-gray-600"
+                            }`}
                     >
-                        <option value="all">All Status</option>
-                        <option value="active">Active</option>
-                        <option value="pending">Pending</option>
-                        <option value="banned">Banned</option>
-                    </select>
+                        <Users size={14} />
+                        Users
+                    </button>
+                    <button
+                        onClick={() => setSubTab("roles")}
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${subTab === "roles"
+                            ? "bg-white text-gray-900 shadow-sm border border-gray-100"
+                            : "text-gray-400 hover:text-gray-600"
+                            }`}
+                    >
+                        <Shield size={14} />
+                        Roles
+                    </button>
+                    <button
+                        onClick={() => setSubTab("permissions")}
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${subTab === "permissions"
+                            ? "bg-white text-gray-900 shadow-sm border border-gray-100"
+                            : "text-gray-400 hover:text-gray-600"
+                            }`}
+                    >
+                        <Lock size={14} />
+                        Permissions
+                    </button>
                 </div>
             </div>
+
+            {subTab === "roles" ? (
+                <AdminRolesModule />
+            ) : subTab === "permissions" ? (
+                <AdminPermissionsModule />
+            ) : (
+                <>
+                    <div className="flex items-center justify-end gap-3 mb-6">
+                        <div className="px-4 py-2 bg-white border border-gray-100 rounded-xl shadow-sm flex items-center gap-3 w-64">
+                            <Search size={16} className="text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Find user..."
+                                className="bg-transparent border-none outline-none text-xs font-bold uppercase w-full"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+                        <select
+                            className="px-4 py-2 bg-white border border-gray-100 rounded-xl shadow-sm text-xs font-bold uppercase outline-none cursor-pointer"
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                        >
+                            <option value="all">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="pending">Pending</option>
+                            <option value="banned">Banned</option>
+                        </select>
+                    </div>
 
             <div className="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
                 <table className="w-full text-left border-collapse">
@@ -194,69 +238,71 @@ export default function AdminUserModule() {
             </div>
 
             {/* Role Assignment Modal */}
-            {isAssigningRoles && selectedUser && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
-                    <div className="bg-white rounded-[32px] w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden">
-                        <div className="p-8">
-                            <div className="flex items-center justify-between mb-6">
-                                <div>
-                                    <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">Assign Roles</h3>
-                                    <p className="text-sm text-gray-500 font-medium">For {selectedUser.full_name}</p>
-                                </div>
-                                <button onClick={() => setIsAssigningRoles(false)} className="text-gray-400 hover:text-gray-900 transition-colors">
-                                    <X size={24} />
-                                </button>
-                            </div>
-
-                            <div className="space-y-3">
-                                {["owner", "rider", "trainer", "producer"].map((role) => (
-                                    <label
-                                        key={role}
-                                        className={`flex items-center justify-between p-4 rounded-2xl border transition-all cursor-pointer group ${(selectedUser.functional_roles || []).includes(role)
-                                            ? 'bg-orange-50 border-orange-200 shadow-sm'
-                                            : 'bg-gray-50/50 border-gray-100 hover:border-orange-100 hover:bg-white'
-                                            }`}
-                                    >
-                                        <div className="flex items-center gap-3">
-                                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${(selectedUser.functional_roles || []).includes(role)
-                                                ? 'bg-[var(--color-primary)] text-white'
-                                                : 'bg-white text-gray-400 border border-gray-100'
-                                                }`}>
-                                                {(selectedUser.functional_roles || []).includes(role) ? <Check size={16} strokeWidth={3} /> : <div className="w-2 h-2 rounded-full bg-gray-200" />}
-                                            </div>
-                                            <span className={`font-black uppercase text-xs tracking-widest transition-colors ${(selectedUser.functional_roles || []).includes(role) ? 'text-[var(--color-primary)]' : 'text-gray-600'
-                                                }`}>
-                                                {role}
-                                            </span>
+                    {isAssigningRoles && selectedUser && (
+                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+                            <div className="bg-white rounded-[32px] w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden">
+                                <div className="p-8">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <div>
+                                            <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">Assign Roles</h3>
+                                            <p className="text-sm text-gray-500 font-medium">For {selectedUser.full_name}</p>
                                         </div>
-                                        <input
-                                            type="checkbox"
-                                            className="hidden"
-                                            checked={(selectedUser.functional_roles || []).includes(role)}
-                                            onChange={(e) => {
-                                                const currentRoles = selectedUser.functional_roles || [];
-                                                const newRoles = e.target.checked
-                                                    ? [...currentRoles, role]
-                                                    : currentRoles.filter((r: string) => r !== role);
+                                        <button onClick={() => setIsAssigningRoles(false)} className="text-gray-400 hover:text-gray-900 transition-colors">
+                                            <X size={24} />
+                                        </button>
+                                    </div>
 
-                                                const updatedUser = { ...selectedUser, functional_roles: newRoles };
-                                                setSelectedUser(updatedUser);
-                                                updateUser(selectedUser.id, { functional_roles: newRoles });
-                                            }}
-                                        />
-                                    </label>
-                                ))}
+                                    <div className="space-y-3">
+                                        {["owner", "rider", "trainer", "producer"].map((role) => (
+                                            <label
+                                                key={role}
+                                                className={`flex items-center justify-between p-4 rounded-2xl border transition-all cursor-pointer group ${(selectedUser.functional_roles || []).includes(role)
+                                                    ? 'bg-orange-50 border-orange-200 shadow-sm'
+                                                    : 'bg-gray-50/50 border-gray-100 hover:border-orange-100 hover:bg-white'
+                                                    }`}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${(selectedUser.functional_roles || []).includes(role)
+                                                        ? 'bg-[var(--color-primary)] text-white'
+                                                        : 'bg-white text-gray-400 border border-gray-100'
+                                                        }`}>
+                                                        {(selectedUser.functional_roles || []).includes(role) ? <Check size={16} strokeWidth={3} /> : <div className="w-2 h-2 rounded-full bg-gray-200" />}
+                                                    </div>
+                                                    <span className={`font-black uppercase text-xs tracking-widest transition-colors ${(selectedUser.functional_roles || []).includes(role) ? 'text-[var(--color-primary)]' : 'text-gray-600'
+                                                        }`}>
+                                                        {role}
+                                                    </span>
+                                                </div>
+                                                <input
+                                                    type="checkbox"
+                                                    className="hidden"
+                                                    checked={(selectedUser.functional_roles || []).includes(role)}
+                                                    onChange={(e) => {
+                                                        const currentRoles = selectedUser.functional_roles || [];
+                                                        const newRoles = e.target.checked
+                                                            ? [...currentRoles, role]
+                                                            : currentRoles.filter((r: string) => r !== role);
+
+                                                        const updatedUser = { ...selectedUser, functional_roles: newRoles };
+                                                        setSelectedUser(updatedUser);
+                                                        updateUser(selectedUser.id, { functional_roles: newRoles });
+                                                    }}
+                                                />
+                                            </label>
+                                        ))}
+                                    </div>
+
+                                    <button
+                                        onClick={() => setIsAssigningRoles(false)}
+                                        className="w-full mt-8 bg-gray-900 text-white font-black uppercase text-xs tracking-widest py-4 rounded-2xl hover:bg-black transition-all shadow-lg"
+                                    >
+                                        Done
+                                    </button>
+                                </div>
                             </div>
-
-                            <button
-                                onClick={() => setIsAssigningRoles(false)}
-                                className="w-full mt-8 bg-gray-900 text-white font-black uppercase text-xs tracking-widest py-4 rounded-2xl hover:bg-black transition-all shadow-lg"
-                            >
-                                Done
-                            </button>
                         </div>
-                    </div>
-                </div>
+                    )}
+                </>
             )}
         </div>
     );

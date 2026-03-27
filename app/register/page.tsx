@@ -4,13 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { User, Mail, Lock } from "lucide-react";
+import { User, Mail, Lock, Phone } from "lucide-react";
 
 export default function RegisterPage() {
     const router = useRouter();
     const supabase = createClient();
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
@@ -37,7 +38,10 @@ export default function RegisterPage() {
             email,
             password,
             options: {
-                data: { full_name: fullName },
+                data: { 
+                    full_name: fullName,
+                    phone: phone 
+                },
             },
         });
 
@@ -52,6 +56,8 @@ export default function RegisterPage() {
             await (supabase.from("profiles") as any).insert({
                 id: data.user.id,
                 full_name: fullName,
+                email: email,
+                phone: phone,
                 role: "user",
             });
 
@@ -160,6 +166,27 @@ export default function RegisterPage() {
                                 placeholder="Email"
                                 required
                                 autoComplete="email"
+                            />
+                        </div>
+
+                        <div style={{ position: "relative" }}>
+                            <div style={{
+                                position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)",
+                                display: "flex", alignItems: "center", color: "#666"
+                            }}>
+                                <Phone size={18} />
+                                <div style={{ height: "20px", width: "1px", background: "#ddd", marginLeft: "10px" }}></div>
+                            </div>
+                            <input
+                                type="tel"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                style={{
+                                    width: "100%", padding: "14px 14px 14px 50px", borderRadius: "4px",
+                                    border: "none", background: "#f0f0f0", fontSize: "15px", color: "#333"
+                                }}
+                                placeholder="Phone Number"
+                                required
                             />
                         </div>
 

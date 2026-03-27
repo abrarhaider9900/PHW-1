@@ -38,9 +38,9 @@ export default function LoginPage() {
                 .single();
 
             if (profile?.role === "admin") {
-                router.push("/dashboard");
+                router.push("/");
             } else {
-                router.push("/dashboard");
+                router.push("/");
             }
             router.refresh();
         }

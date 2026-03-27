@@ -23,15 +23,11 @@ export default async function HomePage() {
         .order("id") as any);
     const disciplines = disciplinesData as any[];
 
-    // Fetch top performance per discipline (last 30 days)
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
     const { data: performancesData } = await (supabase
         .from("performances")
         .select("*, horse:horses(*, trainer:trainers(*)), discipline:disciplines(*)")
-        .gte("created_at", thirtyDaysAgo.toISOString())
-        .order("prize_money", { ascending: false }) as any);
+        .eq("is_top_performance", true)
+        .order("performance_date", { ascending: false }) as any);
     const performances = performancesData as any[];
 
     // Group by discipline
