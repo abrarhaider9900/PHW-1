@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
-import HorseProfileClient from "@/components/horses/HorseProfileClient";
+import HorseDetails from "@/components/horses/details/HorseDetails";
 
 interface Props {
     params: { id: string };
 }
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { id } = params;
@@ -28,40 +30,68 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function HorseDetailPage({ params }: Props) {
     const { id } = params;
     const supabase = await createClient();
+    const horseId = Number(id);
+    if (!Number.isFinite(horseId)) notFound();
 
-    // 1. Get current user for owner check
-    const { data: { user } } = await supabase.auth.getUser();
-    let isOwner = false;
-    
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
+    // 2. Fetch Horse Data (keep query simple; join separately to avoid relationship/RLS edge-cases)
+    const { data: horseRowRaw, error: horseError } = await supabase
+        .from("horses")
+        .select("*")
+        .eq("id", horseId)
+        .maybeSingle();
+
+    if (horseError) {
+        console.error("[Stallions/[id]] horse fetch error", { horseId, message: horseError.message });
+        throw new Error("Failed to load horse");
+    }
+
+    if (!horseRowRaw) notFound();
+
+    const horseRow = horseRowRaw as any;
+
+    const [trainerRes, ownerRes] = await Promise.all([
+        horseRow.trainer_id
+            ? (supabase.from("trainers").select("*").eq("id", horseRow.trainer_id).maybeSingle() as any)
+            : Promise.resolve({ data: null, error: null }),
+        horseRow.owner_id
+            ? (supabase.from("profiles").select("*").eq("id", horseRow.owner_id).maybeSingle() as any)
+            : Promise.resolve({ data: null, error: null }),
+    ]);
+
+    if (trainerRes.error) {
+        console.error("[Stallions/[id]] trainer fetch error", { horseId, message: trainerRes.error.message });
+    }
+    if (ownerRes.error) {
+        console.error("[Stallions/[id]] owner fetch error", { horseId, message: ownerRes.error.message });
+    }
+
+    const horse = {
+        ...(horseRow as any),
+        trainer: trainerRes.data ?? null,
+        owner: ownerRes.data ?? null,
+    } as any;
+
+    // 1. Determine viewer permissions (admin/owner can see owner tools)
+    let viewerRole: string | null = null;
+    const isLoggedIn = Boolean(user);
+    const isHorseOwner = Boolean(user && horse.owner_id === user.id);
+    let isAdmin = false;
+
     if (user) {
         const { data: profile } = await supabase
             .from("profiles")
             .select("role")
             .eq("id", user.id)
             .single();
-        
-        isOwner = (profile as any)?.role === 'admin';
+        viewerRole = (profile as any)?.role ?? null;
+        isAdmin = viewerRole === "admin";
     }
 
-    // 2. Fetch Horse Data
-    console.log("Fetching Horse ID:", id);
-    const { data: horseData, error } = await supabase
-        .from("horses")
-        .select("*, trainer:trainers(*), owner:profiles(*)")
-        .eq("id", parseInt(id))
-        .single();
-    
-    if (error) console.error("Supabase Error:", error.message);
-    if (!horseData) {
-        console.log("Horse NOT FOUND in DB for ID:", id);
-        notFound();
-    }
-
-    const horse = horseData as any;
-
-    if (user && horse.owner_id === user.id) {
-        isOwner = true;
-    }
+    const canOwnerView = isAdmin || isHorseOwner;
 
     // 3. Fetch Performances with relations
     const { data: performances } = await supabase
@@ -71,10 +101,11 @@ export default async function HorseDetailPage({ params }: Props) {
         .order("performance_date", { ascending: false });
 
     return (
-        <HorseProfileClient 
-            horse={horseData} 
-            performances={performances || []} 
-            isOwner={isOwner} 
+        <HorseDetails
+            horse={horse as any}
+            performances={performances || []}
+            isLoggedIn={isLoggedIn}
+            canOwnerView={canOwnerView}
         />
     );
 }

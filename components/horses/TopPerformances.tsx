@@ -93,7 +93,7 @@ export default function TopPerformances({
                             <Link
                                 key={`${discipline.id}-${perf.id ?? idx}`}
                                 href={`/Stallions/${perf.horse_id}`}
-                                className="premium-card-hover"
+                                className="premium-card-hover border border-gray-200"
                                 style={{
                                     display: "flex",
                                     background: "#f8fafb",

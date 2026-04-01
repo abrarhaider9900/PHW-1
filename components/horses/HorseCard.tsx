@@ -21,16 +21,11 @@ export default function HorseCard({ horse }: HorseCardProps) {
     return (
         <Link
             href={`/Stallions/${horse.id}`}
-            className="features-style-item"
+            className="features-style-item border border-gray-200 bg-white rounded-[10px] overflow-hidden transition-all duration-300 ease-in-out hover:shadow-md"
             style={{
                 textDecoration: "none",
                 display: "flex",
                 marginBottom: "20px",
-                background: "#ffffff",
-                transition: "0.3s",
-                borderRadius: "10px",
-                overflow: "hidden",
-                border: "1px solid #e4e4e4"
             }}
         >
             {/* Image */}

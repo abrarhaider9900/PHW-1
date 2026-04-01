@@ -15,6 +15,7 @@ export default function Navbar() {
 
     const [profile, setProfile] = useState<Profile | null>(null);
     const [email, setEmail] = useState<string | null>(null);
+    const [isScrolled, setIsScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false);
@@ -62,6 +63,23 @@ export default function Navbar() {
             subscription.unsubscribe();
         };
     }, [supabase]);
+
+    useEffect(() => {
+        let ticking = false;
+
+        const onScroll = () => {
+            if (ticking) return;
+            ticking = true;
+            window.requestAnimationFrame(() => {
+                setIsScrolled(window.scrollY > 8);
+                ticking = false;
+            });
+        };
+
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
@@ -116,7 +134,14 @@ export default function Navbar() {
     ];
 
     return (
-        <header className="w-full bg-[#f1f1f1] sticky top-0 z-50">
+        <header
+            className={[
+                "w-full z-50 transition-all duration-300 ease-in-out",
+                isScrolled
+                    ? "fixed top-0 left-0 right-0 bg-white shadow-md translate-y-0"
+                    : "sticky top-0 bg-transparent shadow-none -translate-y-2",
+            ].join(" ")}
+        >
             <div className="max-w-[1240px] mx-auto px-6 md:px-10">
                 <nav className="flex items-center justify-between h-[80px] md:h-[130px]">
 
@@ -223,6 +248,9 @@ export default function Navbar() {
                                     <div className="text-right hidden sm:block">
                                         <div className="text-[14px] md:text-[16px] font-[700] text-[#333] leading-tight lowercase">
                                             {profile?.full_name || email.split('@')[0]}
+                                        </div>
+                                        <div className="text-sm text-gray-500 leading-tight">
+                                            {email ?? ""}
                                         </div>
                                     </div>
                                     <div className="w-[35px] h-[35px] md:w-[45px] md:h-[45px] bg-[#d1d5db] rounded-full flex items-center justify-center text-white overflow-hidden relative">

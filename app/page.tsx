@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
+import { formatHorseAge } from "@/utils/format";
 
 export const metadata: Metadata = {
     title: "Performance Horse World | Home",
@@ -127,15 +128,11 @@ export default async function HomePage() {
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
                                 {trendingHorses && (trendingHorses as any[]).map((horse: any) => {
-                                    let ageStr = "N/A";
-                                    if (horse.date_of_birth) {
-                                        const birthDate = new Date(horse.date_of_birth);
-                                        const age = new Date().getFullYear() - birthDate.getFullYear();
-                                        ageStr = age >= 0 ? `${age} years` : "0 years";
-                                    } else if (horse.birth_year) {
-                                        const age = new Date().getFullYear() - horse.birth_year;
-                                        ageStr = `${age} years`;
-                                    }
+                                    const ageStr =
+                                        formatHorseAge(
+                                            horse.birth_date ?? horse.date_of_birth,
+                                            horse.birth_year
+                                        ) ?? "N/A";
 
                                     const ownerOrTrainerName = (horse.owner as any)?.full_name || horse.trainer?.name || "Unknown";
 
@@ -149,9 +146,10 @@ export default async function HomePage() {
                                                 background: "#ffffff",
                                                 borderRadius: "16px",
                                                 overflow: "hidden",
-                                                border: "1px solid #f0f0f0",
                                                 boxShadow: "0 2px 8px rgba(0,0,0,0.02)"
-                                            }}>
+                                            }}
+                                        >
+                                            <div className="border border-gray-200 rounded-[16px] overflow-hidden bg-white">
                                             <div style={{ width: "100%", height: "150px", position: "relative" }}>
                                                 <Image
                                                     src={horse.image_url || "/images/placeholder.jpg"}
@@ -168,6 +166,7 @@ export default async function HomePage() {
                                                     {ownerOrTrainerName} • {ageStr}
                                                 </div>
                                             </div>
+                                            </div>
                                         </Link>
                                     );
                                 })}
@@ -179,9 +178,9 @@ export default async function HomePage() {
                             background: "#ffffff",
                             borderRadius: "24px",
                             padding: "32px",
-                            border: "1px solid #f0f0f0",
                             boxShadow: "0 4px 20px rgba(0,0,0,0.03)"
                         }}>
+                            <div className="border border-gray-200 rounded-[24px] p-[32px]">
                             <div style={{ marginBottom: "28px" }}>
                                 <h4 style={{
                                     fontSize: "20px",
@@ -207,9 +206,10 @@ export default async function HomePage() {
                                                 background: "#ffffff",
                                                 borderRadius: "18px",
                                                 overflow: "hidden",
-                                                border: "1px solid #f0f0f0",
                                                 boxShadow: "0 2px 8px rgba(0,0,0,0.02)"
-                                            }}>
+                                            }}
+                                        >
+                                            <div className="border border-gray-200 rounded-[18px] overflow-hidden bg-white">
                                             <div style={{
                                                 width: "100%",
                                                 height: "220px",
@@ -251,6 +251,7 @@ export default async function HomePage() {
                                                     Trained horses: {horseCount}
                                                 </div>
                                             </div>
+                                            </div>
                                         </Link>
                                     );
                                 }) : (
@@ -258,6 +259,7 @@ export default async function HomePage() {
                                         No trainers currently spotlighted
                                     </div>
                                 )}
+                            </div>
                             </div>
                         </div>
 

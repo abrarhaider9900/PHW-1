@@ -20,15 +20,21 @@ import { getEmbedUrl } from "@/utils/video";
 interface HorseProfileClientProps {
     horse: any;
     performances: any[];
-    isOwner: boolean;
+    isLoggedIn: boolean;
+    viewerRole: string | null;
+    canOwnerView: boolean;
 }
 
 export default function HorseProfileClient({
     horse,
     performances,
-    isOwner
+    isLoggedIn,
+    viewerRole,
+    canOwnerView
 }: HorseProfileClientProps) {
-    const [viewType, setViewType] = useState<'public' | 'owner'>(isOwner ? 'owner' : 'public');
+    const [viewType, setViewType] = useState<"public" | "owner">(
+        canOwnerView ? "owner" : "public"
+    );
     const [activeDiscipline, setActiveDiscipline] = useState<string | null>(
         performances[0]?.discipline?.name || null
     );
@@ -58,8 +64,8 @@ export default function HorseProfileClient({
         <div style={{ background: "#f8f7f2", minHeight: "100vh", padding: "40px 0" }}>
             <div className="container" style={{ maxWidth: "1200px" }}>
                 
-                {/* View Toggle (Only for Owner/Admin) */}
-                {isOwner && (
+                {/* View Toggle (Only for Admin / Horse Owner) */}
+                {canOwnerView && (
                     <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginBottom: "40px" }}>
                         {ownerToggleBtn('owner')}
                         {ownerToggleBtn('public')}
@@ -108,7 +114,7 @@ export default function HorseProfileClient({
                         </div>
 
                         {/* Public Actions */}
-                        {viewType === 'public' && (
+                        {viewType === "public" && (
                             <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "25px" }}>
                                 <button className={outlineBtn}><Share2 size={16} /> Share</button>
                                 <button className={outlineBtn}><UserPlus size={16} /> Follow</button>
@@ -117,7 +123,7 @@ export default function HorseProfileClient({
                         )}
 
                         <div style={{ display: "flex", gap: "15px", flexWrap: "wrap" }}>
-                            {viewType === 'public' ? (
+                            {viewType === "public" ? (
                                 <>
                                     <button className={primaryBtn}>View Pedigree</button>
                                     <button className={primaryBtn}>Print Stats</button>

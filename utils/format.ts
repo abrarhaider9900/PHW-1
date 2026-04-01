@@ -59,3 +59,39 @@ export function toSlug(str: string): string {
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");
 }
+
+function isValidDate(d: Date): boolean {
+    return !Number.isNaN(d.getTime());
+}
+
+/**
+ * Returns a human-readable horse age like "5 yrs".
+ * Falls back to birth year if a full birth date isn't available.
+ */
+export function formatHorseAge(
+    birthDate: string | null | undefined,
+    birthYear: number | null | undefined
+): string | null {
+    const now = new Date();
+
+    if (birthDate) {
+        const d = new Date(birthDate);
+        if (isValidDate(d)) {
+            let years = now.getFullYear() - d.getFullYear();
+            const monthDiff = now.getMonth() - d.getMonth();
+            const dayDiff = now.getDate() - d.getDate();
+            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+                years -= 1;
+            }
+            if (years < 0) years = 0;
+            return `${years} yrs`;
+        }
+    }
+
+    if (typeof birthYear === "number" && Number.isFinite(birthYear)) {
+        const years = Math.max(0, now.getFullYear() - birthYear);
+        return `${years} yrs`;
+    }
+
+    return null;
+}
