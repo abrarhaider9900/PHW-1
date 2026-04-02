@@ -66,6 +66,12 @@ export interface Event {
     state: string | null;
     country: string | null;
     date: string;
+    event_type?: string | null;
+    contact_name?: string | null;
+    address?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    zip_code?: string | null;
     description: string | null;
     image_url: string | null;
     created_at: string;

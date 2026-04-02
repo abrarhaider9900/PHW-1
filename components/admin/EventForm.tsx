@@ -21,10 +21,16 @@ export default function EventForm({ event }: EventFormProps) {
     const [formData, setFormData] = useState({
         name: event?.name || "",
         date: event?.date || new Date().toISOString().split("T")[0],
+        event_type: (event as any)?.event_type || "",
         venue: event?.venue || "",
+        address: (event as any)?.address || "",
         city: event?.city || "",
         state: event?.state || "",
+        zip_code: (event as any)?.zip_code || "",
         country: event?.country || "USA",
+        contact_name: (event as any)?.contact_name || "",
+        email: (event as any)?.email || "",
+        phone: (event as any)?.phone || "",
         description: event?.description || "",
     });
 
@@ -70,8 +76,28 @@ export default function EventForm({ event }: EventFormProps) {
                         <input type="date" name="date" value={formData.date} onChange={handleChange} className="form-input" required />
                     </div>
                     <div>
-                        <label className="form-label">Venue</label>
+                        <label className="form-label">Event Type</label>
+                        <input name="event_type" value={(formData as any).event_type} onChange={handleChange} className="form-input" placeholder="e.g. Team Roping" />
+                    </div>
+                    <div>
+                        <label className="form-label">Arena</label>
                         <input name="venue" value={formData.venue} onChange={handleChange} className="form-input" placeholder="e.g. Will Rogers Memorial Center" />
+                    </div>
+                    <div>
+                        <label className="form-label">Contact Name</label>
+                        <input name="contact_name" value={(formData as any).contact_name} onChange={handleChange} className="form-input" />
+                    </div>
+                    <div>
+                        <label className="form-label">Email</label>
+                        <input type="email" name="email" value={(formData as any).email} onChange={handleChange} className="form-input" />
+                    </div>
+                    <div>
+                        <label className="form-label">Phone</label>
+                        <input name="phone" value={(formData as any).phone} onChange={handleChange} className="form-input" />
+                    </div>
+                    <div style={{ gridColumn: "1 / -1" }}>
+                        <label className="form-label">Address</label>
+                        <input name="address" value={(formData as any).address} onChange={handleChange} className="form-input" placeholder="Street address" />
                     </div>
                     <div>
                         <label className="form-label">City</label>
@@ -80,6 +106,10 @@ export default function EventForm({ event }: EventFormProps) {
                     <div>
                         <label className="form-label">State/Province</label>
                         <input name="state" value={formData.state} onChange={handleChange} className="form-input" />
+                    </div>
+                    <div>
+                        <label className="form-label">Zip Code</label>
+                        <input name="zip_code" value={(formData as any).zip_code} onChange={handleChange} className="form-input" />
                     </div>
                     <div>
                         <label className="form-label">Country</label>

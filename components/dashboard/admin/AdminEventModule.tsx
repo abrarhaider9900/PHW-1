@@ -8,10 +8,8 @@ import {
     Trash2,
     Calendar,
     MapPin,
-    Search,
     X,
     Check,
-    ChevronDown,
     Upload,
     Image as ImageIcon
 } from "lucide-react";
@@ -30,10 +28,16 @@ export default function AdminEventModule() {
 
     const [formData, setFormData] = useState({
         name: "",
+        event_type: "",
         venue: "",
+        address: "",
         city: "",
         state: "",
+        zip_code: "",
         country: "USA",
+        contact_name: "",
+        email: "",
+        phone: "",
         date: new Date().toISOString().split('T')[0],
         description: "",
         image_url: ""
@@ -131,7 +135,17 @@ export default function AdminEventModule() {
 
     const resetForm = () => {
         setFormData({
-            name: "", venue: "", city: "", state: "", country: "USA",
+            name: "",
+            event_type: "",
+            venue: "",
+            address: "",
+            city: "",
+            state: "",
+            zip_code: "",
+            country: "USA",
+            contact_name: "",
+            email: "",
+            phone: "",
             date: new Date().toISOString().split('T')[0], description: "", image_url: ""
         });
         setSelectedFile(null);
@@ -211,6 +225,13 @@ export default function AdminEventModule() {
                                             />
                                             <input
                                                 type="text"
+                                                className="w-full px-4 py-2 bg-white border border-gray-100 rounded-lg text-sm font-bold shadow-sm outline-none"
+                                                placeholder="Event Type"
+                                                value={formData.event_type}
+                                                onChange={(e) => setFormData({ ...formData, event_type: e.target.value })}
+                                            />
+                                            <input
+                                                type="text"
                                                 className="w-full px-4 py-2 bg-white border border-gray-100 rounded-lg text-sm font-bold shadow-sm outline-none text-[10px]"
                                                 placeholder="Or paste Image URL"
                                                 value={formData.image_url}
@@ -220,20 +241,50 @@ export default function AdminEventModule() {
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <input
-                                        type="date"
-                                        className="w-full px-4 py-2 bg-white border border-gray-100 rounded-lg text-sm font-bold shadow-sm outline-none"
-                                        value={formData.date}
-                                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                    />
+                                    <div className="space-y-2">
+                                        <input
+                                            type="date"
+                                            className="w-full px-4 py-2 bg-white border border-gray-100 rounded-lg text-sm font-bold shadow-sm outline-none"
+                                            value={formData.date}
+                                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                                        />
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-2 bg-white border border-gray-100 rounded-lg text-sm font-bold shadow-sm outline-none"
+                                            placeholder="Contact Name"
+                                            value={formData.contact_name}
+                                            onChange={(e) => setFormData({ ...formData, contact_name: e.target.value })}
+                                        />
+                                        <input
+                                            type="email"
+                                            className="w-full px-4 py-2 bg-white border border-gray-100 rounded-lg text-sm font-bold shadow-sm outline-none"
+                                            placeholder="Email"
+                                            value={formData.email}
+                                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        />
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-2 bg-white border border-gray-100 rounded-lg text-sm font-bold shadow-sm outline-none"
+                                            placeholder="Phone"
+                                            value={formData.phone}
+                                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                        />
+                                    </div>
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex flex-col gap-2">
                                         <input
-                                            type="text" placeholder="Venue"
+                                            type="text" placeholder="Arena"
                                             className="w-full px-4 py-2 bg-white border border-gray-100 rounded-lg text-sm font-bold shadow-sm outline-none"
                                             value={formData.venue}
                                             onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
+                                        />
+                                        <input
+                                            type="text"
+                                            placeholder="Address"
+                                            className="w-full px-4 py-2 bg-white border border-gray-100 rounded-lg text-sm font-bold shadow-sm outline-none"
+                                            value={formData.address}
+                                            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                                         />
                                         <div className="flex gap-2">
                                             <input
@@ -249,6 +300,26 @@ export default function AdminEventModule() {
                                                 onChange={(e) => setFormData({ ...formData, state: e.target.value })}
                                             />
                                         </div>
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="text" placeholder="Zip Code"
+                                                className="w-1/2 px-4 py-2 bg-white border border-gray-100 rounded-lg text-sm font-bold shadow-sm outline-none"
+                                                value={formData.zip_code}
+                                                onChange={(e) => setFormData({ ...formData, zip_code: e.target.value })}
+                                            />
+                                            <input
+                                                type="text" placeholder="Country"
+                                                className="w-1/2 px-4 py-2 bg-white border border-gray-100 rounded-lg text-sm font-bold shadow-sm outline-none"
+                                                value={formData.country}
+                                                onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                                            />
+                                        </div>
+                                        <textarea
+                                            placeholder="Description"
+                                            className="w-full px-4 py-2 bg-white border border-gray-100 rounded-lg text-sm font-bold shadow-sm outline-none min-h-[72px]"
+                                            value={formData.description}
+                                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                        />
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 text-right">
@@ -317,10 +388,16 @@ export default function AdminEventModule() {
                                                         setEditingId(event.id);
                                                         setFormData({
                                                             name: event.name,
+                                                            event_type: event.event_type || "",
                                                             venue: event.venue || "",
+                                                            address: event.address || "",
                                                             city: event.city || "",
                                                             state: event.state || "",
+                                                            zip_code: event.zip_code || "",
                                                             country: event.country || "USA",
+                                                            contact_name: event.contact_name || "",
+                                                            email: event.email || "",
+                                                            phone: event.phone || "",
                                                             date: event.date,
                                                             description: event.description || "",
                                                             image_url: event.image_url || ""

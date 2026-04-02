@@ -1,6 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import SponsorAd from "@/components/layout/SponsorAd";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { formatDate, formatLocation } from "@/utils/format";
 import type { Metadata } from "next";
@@ -36,7 +34,7 @@ export default async function EventDetailPage({ params }: Props) {
 
     if (!event) notFound();
 
-    // Performances at this event
+    // Performances at this event (for results and any derived metadata)
     const { data: performances } = await (supabase
         .from("performances")
         .select("*, horse:horses(id, name), discipline:disciplines(name)")
@@ -45,89 +43,109 @@ export default async function EventDetailPage({ params }: Props) {
         .order("placing") as any);
 
     const location = formatLocation(event.venue, event.city, event.state, event.country);
+    const when = formatDate(event.date);
+
+    const eventType =
+        (performances || [])
+            .map((p: any) => p?.event_type)
+            .find((v: any) => typeof v === "string" && v.trim().length > 0) ??
+        (event as any)?.event_type ??
+        null;
+
+    const contactName =
+        (event as any)?.contact ??
+        (event as any)?.contact_name ??
+        (event as any)?.contactName ??
+        null;
+    const address =
+        (event as any)?.address ??
+        (event as any)?.street_address ??
+        (event as any)?.streetAddress ??
+        null;
+    const email =
+        (event as any)?.email ??
+        (event as any)?.contact_email ??
+        (event as any)?.contactEmail ??
+        null;
+    const phone =
+        (event as any)?.phone ??
+        (event as any)?.contact_phone ??
+        (event as any)?.contactPhone ??
+        null;
 
     return (
-        <div className="container-phw" style={{ paddingTop: "20px", paddingBottom: "20px" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: "20px" }}>
-
-                {/* ── Main ── */}
-                <div>
-                    {/* Breadcrumb */}
-                    <div style={{ fontSize: "12px", color: "var(--color-text-dim)", marginBottom: "12px" }}>
-                        <Link href="/" style={{ color: "var(--color-text-dim)" }}>Home</Link>
-                        {" / "}
-                        <Link href="/allevents" style={{ color: "var(--color-text-dim)" }}>Events</Link>
-                        {" / "}
-                        <span style={{ color: "var(--color-text-muted)" }}>{event.name}</span>
+        <div
+            style={{
+                background: "var(--color-bg)",
+                padding: "30px 0 50px",
+            }}
+        >
+            <div className="container" style={{ padding: "0 20px" }}>
+                <div
+                    style={{
+                        maxWidth: "980px",
+                        margin: "0 auto",
+                        background: "#fff",
+                        borderRadius: "10px",
+                        boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+                        border: "1px solid #e8e8e8",
+                    }}
+                >
+                    <div style={{ padding: "22px 26px 10px" }}>
+                        <div style={{ fontSize: "20px", fontWeight: 800, color: "#0b1638", marginBottom: "6px" }}>
+                            {event.name}
+                        </div>
+                        {location && (
+                            <div style={{ fontSize: "12px", color: "#666", fontWeight: 600 }}>
+                                {location}
+                            </div>
+                        )}
                     </div>
 
-                    {/* Event detail card */}
-                    <div className="card" style={{ marginBottom: "16px" }}>
-                        <div className="section-header">{event.name}</div>
-                        <div style={{ padding: "20px" }}>
-                            <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", marginBottom: "16px" }}>
-                                <div>
-                                    <div style={{ fontSize: "11px", color: "var(--color-text-dim)", textTransform: "uppercase", marginBottom: "3px" }}>Date</div>
-                                    <div style={{ fontSize: "14px", color: "var(--color-primary)", fontWeight: 600 }}>{formatDate(event.date)}</div>
-                                </div>
-                                {location && (
-                                    <div>
-                                        <div style={{ fontSize: "11px", color: "var(--color-text-dim)", textTransform: "uppercase", marginBottom: "3px" }}>Location</div>
-                                        <div style={{ fontSize: "14px", color: "var(--color-text)" }}>{location}</div>
-                                    </div>
-                                )}
+                    <div style={{ height: "1px", background: "#e8e8e8" }} />
+
+                    <div style={{ padding: "14px 26px 26px" }}>
+                        <div
+                            style={{
+                                display: "grid",
+                                gridTemplateColumns: "160px 1fr",
+                                columnGap: "26px",
+                                rowGap: "10px",
+                                alignItems: "start",
+                            }}
+                        >
+                            <div style={{ fontSize: "12px", fontWeight: 700, color: "#1f2b4d" }}>When</div>
+                            <div style={{ fontSize: "12px", color: "#1f2b4d" }}>{when || "—"}</div>
+
+                            <div style={{ fontSize: "12px", fontWeight: 700, color: "#1f2b4d" }}>Event Type</div>
+                            <div style={{ fontSize: "12px", color: "#1f2b4d" }}>{eventType || "—"}</div>
+
+                            <div style={{ fontSize: "12px", fontWeight: 700, color: "#1f2b4d" }}>Description</div>
+                            <div style={{ fontSize: "12px", color: "#1f2b4d", whiteSpace: "pre-wrap" }}>
+                                {event.description || "—"}
                             </div>
-                            {event.description && (
-                                <p style={{ fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.7 }}>
-                                    {event.description}
-                                </p>
-                            )}
+
+                            <div style={{ fontSize: "12px", fontWeight: 700, color: "#1f2b4d" }}>Arena</div>
+                            <div style={{ fontSize: "12px", color: "#1f2b4d" }}>
+                                {(event.venue as string | null) || "—"}
+                            </div>
+
+                            <div style={{ fontSize: "12px", fontWeight: 700, color: "#1f2b4d" }}>Contact</div>
+                            <div style={{ fontSize: "12px", color: "#1f2b4d" }}>{contactName || "—"}</div>
+
+                            <div style={{ fontSize: "12px", fontWeight: 700, color: "#1f2b4d" }}>Address</div>
+                            <div style={{ fontSize: "12px", color: "#1f2b4d" }}>
+                                {address || [event.city, event.state, event.country].filter(Boolean).join(", ") || "—"}
+                            </div>
+
+                            <div style={{ fontSize: "12px", fontWeight: 700, color: "#1f2b4d" }}>Email</div>
+                            <div style={{ fontSize: "12px", color: "#1f2b4d" }}>{email || "—"}</div>
+
+                            <div style={{ fontSize: "12px", fontWeight: 700, color: "#1f2b4d" }}>phone</div>
+                            <div style={{ fontSize: "12px", color: "#1f2b4d" }}>{phone || "—"}</div>
                         </div>
                     </div>
-
-                    {/* Event results */}
-                    {performances && performances.length > 0 && (
-                        <div className="card">
-                            <div className="section-header">Event Results</div>
-                            <div>
-                                <table className="phw-table">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Horse</th>
-                                            <th>Discipline</th>
-                                            <th>Score/Time</th>
-                                            <th>Prize</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {performances.map((perf: any) => (
-                                            <tr key={perf.id}>
-                                                <td style={{ color: "var(--color-text-dim)" }}>{perf.placing ?? "—"}</td>
-                                                <td>
-                                                    <Link href={`/Stallions/${perf.horse_id}`} style={{ color: "var(--color-primary)" }}>
-                                                        {(perf.horse as any)?.name ?? "—"}
-                                                    </Link>
-                                                </td>
-                                                <td style={{ color: "var(--color-text-muted)" }}>{(perf.discipline as any)?.name ?? "—"}</td>
-                                                <td>{perf.time_or_score ?? "—"}</td>
-                                                <td style={{ color: "var(--color-primary)" }}>
-                                                    {perf.prize_money ? `$${perf.prize_money.toLocaleString()}` : "—"}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    )}
                 </div>
-
-                {/* ── Sidebar ── */}
-                <aside>
-                    <div className="section-header" style={{ marginBottom: "8px" }}>SPONSOR AD</div>
-                    <SponsorAd sponsor={null} width={280} height={220} />
-                </aside>
             </div>
         </div>
     );
